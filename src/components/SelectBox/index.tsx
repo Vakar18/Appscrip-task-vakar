@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import PropTypes from "prop-types";
+import { Props as ReactSelectProps } from "react-select"; // Import react-select prop types
+
+// Define the shape of the props for SelectBox
+interface SelectBoxProps extends ReactSelectProps {
+  shape?: "square"; // Custom prop
+  indicator?: React.ReactNode; // Custom prop
+  size?: "xs"; // Custom prop
+  className?: string;
+}
 
 const shapes = {
   square: "rounded-[0px]",
@@ -10,7 +19,8 @@ const sizes = {
   xs: "h-[22px] pr-6 text-lg",
 };
 
-const SelectBox = React.forwardRef(
+// Define SelectBox component with SelectBoxProps interface
+const SelectBox = React.forwardRef<any, SelectBoxProps>(
   (
     {
       className = "",
@@ -18,27 +28,24 @@ const SelectBox = React.forwardRef(
       isSearchable = false,
       isMulti = false,
       indicator,
-      shape,
+      shape,  // Custom shape prop
       size = "xs",
-      ...restProps
+      ...restProps // Forward other valid props to react-select
     },
     ref
   ) => {
-    const [menuPortalTarget, setMenuPortalTarget] = useState(null);
+    const [menuPortalTarget, setMenuPortalTarget] = useState<HTMLElement | null>(null);
 
-    // Set menuPortalTarget to document.body when the component mounts
     useEffect(() => {
       setMenuPortalTarget(document.body);
     }, []);
 
     return (
-      <>
+      <div className={`${className} ${(shape && shapes[shape]) || ""} ${(size && sizes[size]) || ""}`}>
         <Select
           ref={ref}
           options={options}
-          className={`${className} flex ${(shape && shapes[shape]) || ""} ${
-            (size && sizes[size]) || ""
-          }`}
+          classNamePrefix="react-select"
           isSearchable={isSearchable}
           isMulti={isMulti}
           components={{
@@ -86,19 +93,16 @@ const SelectBox = React.forwardRef(
               ...provided,
               display: "block",
             }),
-            menuPortal: (base) => ({
-              ...base,
-              zIndex: 999999,
-              menuPortalTarget: menuPortalTarget, // This is where the portal target is applied
-            }),
+            // menuPortal: (base) => ({
+            //   ...base,
+            //   zIndex: 999999,
+            //   position: "absolute",
+            //   menuPortalTarget: menuPortalTarget, // Managed internally
+            // }),
           }}
-          menuPortalTarget={menuPortalTarget} // Remove this line
-          closeMenuOnScroll={(event) => {
-            return event.target.id === "scrollContainer";
-          }}
-          {...restProps}
+          {...restProps} // Pass only valid props to react-select
         />
-      </>
+      </div>
     );
   }
 );
