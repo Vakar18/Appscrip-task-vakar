@@ -5,6 +5,7 @@ const variants = {
   primary:
     "border-gray-800 border border-solid bg-white-A700 checked:border-gray-800 checked:border checked:border-solid checked:bg-white-A700 checked:focus:bg-white-A700 checked:focus:border-gray-800",
 };
+
 const sizes = {
   xs: "",
   sm: "h-[18px] w-[18px]",
@@ -32,13 +33,9 @@ const CheckBox = React.forwardRef(
 
     return (
       <>
-        <div
-          className={className + " flex items-center gap-[5px] cursor-pointer"}
-        >
+        <div className={`${className} flex items-center gap-[5px] cursor-pointer`}>
           <input
-            className={` ${(size && sizes[size]) || ""} ${
-              (variant && variants[variant]) || ""
-            }`}
+            className={`${sizes[size] || ""} ${variants[variant] || ""}`}
             ref={ref}
             type="checkbox"
             name={name}
@@ -63,6 +60,7 @@ CheckBox.propTypes = {
   id: PropTypes.string,
   size: PropTypes.oneOf(["xs", "sm", "md"]),
   variant: PropTypes.oneOf(["primary"]),
+  onChange: PropTypes.func,
 };
 
 export { CheckBox };

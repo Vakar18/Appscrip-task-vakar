@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import PropTypes from "prop-types";
 
@@ -13,22 +13,21 @@ const sizes = {
 const SelectBox = React.forwardRef(
   (
     {
-      children,
       className = "",
       options = [],
       isSearchable = false,
       isMulti = false,
       indicator,
       shape,
-
       size = "xs",
       ...restProps
     },
     ref
   ) => {
-    const [menuPortalTarget, setMenuPortalTarget] = React.useState(null);
+    const [menuPortalTarget, setMenuPortalTarget] = useState(null);
 
-    React.useEffect(() => {
+    // Set menuPortalTarget to document.body when the component mounts
+    useEffect(() => {
       setMenuPortalTarget(document.body);
     }, []);
 
@@ -87,15 +86,18 @@ const SelectBox = React.forwardRef(
               ...provided,
               display: "block",
             }),
-            menuPortal: (base) => ({ ...base, zIndex: 999999 }),
+            menuPortal: (base) => ({
+              ...base,
+              zIndex: 999999,
+              menuPortalTarget: menuPortalTarget, // This is where the portal target is applied
+            }),
           }}
-          menuPortalTarget={menuPortalTarget}
+          menuPortalTarget={menuPortalTarget} // Remove this line
           closeMenuOnScroll={(event) => {
             return event.target.id === "scrollContainer";
           }}
           {...restProps}
         />
-        {children}
       </>
     );
   }
